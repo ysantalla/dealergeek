@@ -83,8 +83,6 @@ export function MongooseGraphqlCrudService<T>(
           });
         }
 
-        console.log(queryParsed.query);
-
         if (ability) {
           return this.model
             .accessibleBy(ability)
@@ -118,7 +116,7 @@ export function MongooseGraphqlCrudService<T>(
     }
 
     async create(dto: any): Promise<any> {
-      return await this.model.create(dto);
+      return this.model.create(dto);
     }
 
     async update(id: any, dto: any): Promise<any> {
@@ -126,7 +124,7 @@ export function MongooseGraphqlCrudService<T>(
     }
 
     async updateMany(query: any, dto: any): Promise<any> {
-      return await this.model.updateMany(query, dto);
+      return this.model.updateMany(query, dto);
     }
 
     async delete(id: any): Promise<any> {
@@ -150,11 +148,11 @@ export function MongooseGraphqlCrudService<T>(
     }
 
     async createMany(dto: any[]): Promise<any> {
-      return await this.model.insertMany(dto);
+      return this.model.insertMany(dto);
     }
 
     async aggregate(aggregations: any[]): Promise<any> {
-      return await this.model.aggregate(aggregations);
+      return this.model.aggregate(aggregations);
     }
   }
 

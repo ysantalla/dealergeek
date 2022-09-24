@@ -29,6 +29,7 @@ export interface ICrudService {
   create(dto: any): any;
   update(id: any, dto: any): any;
   updateMany(query: any, dto: any): any;
+  createMany(dto: any): Promise<any>;
   delete(id: any): any;
   deleteMany(ids: any): any;
   aggregate(aggregations: any[]): any;

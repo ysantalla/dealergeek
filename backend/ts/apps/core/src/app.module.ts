@@ -17,13 +17,13 @@ import {
 
 import { TerminusModule } from '@nestjs/terminus';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './user';
 
 import { Env } from './env';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
-    UserModule,
+    AccountModule,
     TerminusModule,
     CommonModule,
     ConfigModule.forRoot({

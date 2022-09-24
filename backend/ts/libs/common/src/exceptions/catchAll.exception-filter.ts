@@ -4,6 +4,8 @@ import { ApolloError, UserInputError } from 'apollo-server-express';
 
 @Catch()
 export class CatchAllExceptionFilter implements GqlExceptionFilter {
+  logger = new Logger(CatchAllExceptionFilter.name);
+
   constructor() {}
 
   catch(exception: any, host: ArgumentsHost) {
@@ -21,6 +23,8 @@ export class CatchAllExceptionFilter implements GqlExceptionFilter {
 
     // do something that is only important in the context of regular HTTP requests (REST)
     const response = host.switchToHttp().getResponse();
+
+    this.logger.log(exception);
 
     response.status(500).send({
       message: 'Internal Error',

@@ -5,17 +5,18 @@ import { accessibleRecordsPlugin } from '@casl/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { defineAbilityFor, USER_ABILITY } from './abilities';
-
 import { CommonModule, DecimalScalar } from '@app/common';
 
-import { UserService } from './user.service';
-import { UserResolver } from './user.resolver';
-
-import { User, UserSchema } from './user.model';
+import { Account, AccountSchema } from './account.model';
 import { BullModule } from '@nestjs/bull';
 
 import { Env } from '../env';
-import { UserController } from './user.controller';
+import { AccountController } from './account.controller';
+import { QueueName } from './account.enum';
+import { AccountService } from './account.service';
+import { AccountResolver } from './account.resolver';
+import { UploadExcelService } from './upload-excel.service';
+import { UploadExcelProcessor } from './upload-excel.processor';
 
 @Module({
   imports: [
@@ -23,10 +24,10 @@ import { UserController } from './user.controller';
     CaslModule.register(defineAbilityFor, USER_ABILITY),
     MongooseModule.forFeatureAsync([
       {
-        name: User.name,
-        collection: 'users',
+        name: Account.name,
+        collection: 'accounts',
         useFactory: () => {
-          const schema = UserSchema;
+          const schema = AccountSchema;
 
           schema.plugin(accessibleRecordsPlugin);
           // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -39,7 +40,7 @@ import { UserController } from './user.controller';
       },
     ]),
     BullModule.registerQueueAsync({
-      name: 'Upload_excel',
+      name: QueueName.SynchronizeData,
       useFactory: async (configService: ConfigService) => ({
         redis: {
           host: configService.get(Env.RedisHost),
@@ -52,8 +53,14 @@ import { UserController } from './user.controller';
       imports: [ConfigModule],
     }),
   ],
-  providers: [UserService, UserResolver, DecimalScalar],
-  controllers: [UserController],
-  exports: [UserService],
+  providers: [
+    AccountService,
+    AccountResolver,
+    DecimalScalar,
+    UploadExcelService,
+    UploadExcelProcessor,
+  ],
+  controllers: [AccountController],
+  exports: [],
 })
-export class UserModule {}
+export class AccountModule {}

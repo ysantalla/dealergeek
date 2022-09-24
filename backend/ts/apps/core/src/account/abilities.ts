@@ -9,19 +9,16 @@ export const enum Abilities {
   create = 'create',
   delete = 'delete',
   read = 'read',
-  ban = 'ban',
-  changePassword = 'changePassword',
-  leniaAuth = 'leniaAuth',
 }
 
 export const enum Subjects {
   all = 'all',
-  User = 'User',
+  Account = 'Account',
 }
 
-export function defineAbilityFor(user: UserSigned) {
+export function defineAbilityFor(account: UserSigned) {
   const { can, build } = new AbilityBuilder(Ability);
-  if (haveRoles(user, Role.Admin)) {
+  if (haveRoles(account, Role.Admin)) {
     can(Abilities.manage, Subjects.all);
   }
 
