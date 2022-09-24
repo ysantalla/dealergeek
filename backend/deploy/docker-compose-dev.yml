@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    restart: always
+    volumes:
+      - mongo_data:/data/db-test
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - 6379:6379
+    restart: always
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass password
+
+volumes:
+  # mssql_data:
+  #   driver: local
+  mongo_data:
+    driver: local
+  # minio_data:
+  #   driver: local
+  redis_data:
+    driver: local

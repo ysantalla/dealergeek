@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "target": "es2020",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@app/common": ["libs/common/src"],
+      "@app/common/*": ["libs/common/src/*"],
+      "@app/mongo-graphql-crud": ["libs/mongo-graphql-crud/src"],
+      "@app/mongo-graphql-crud/*": ["libs/mongo-graphql-crud/src/*"],
+      "@app/auth": ["libs/auth/src"],
+      "@app/auth/*": ["libs/auth/src/*"],
+      "@app/nestjs-casl": ["libs/nestjs-casl/src"],
+      "@app/nestjs-casl/*": ["libs/nestjs-casl/src/*"],
+      "@app/translate": ["libs/translate/src"],
+      "@app/translate/*": ["libs/translate/src/*"],
+      "@app/logger": ["libs/logger/src"],
+      "@app/logger/*": ["libs/logger/src/*"],
+      "@app/app-jwt": ["libs/app-jwt/src"],
+      "@app/app-jwt/*": ["libs/app-jwt/src/*"],
+      "@app/api-key": ["libs/api-key/src"],
+      "@app/api-key/*": ["libs/api-key/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

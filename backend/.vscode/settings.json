@@ -1,0 +1,14 @@
+{
+  "redisXplorer.config": {
+    "profiles": [
+      {
+        "name": "clarivia-redis",
+        "host": "172.20.4.12",
+        "accessKey": "clar1v1a2",
+        "filter": "*",
+        "port": "6379"
+      }
+    ],
+    "scanLimit": 200
+  }
+}

@@ -1,0 +1,15 @@
+export const enum FiltersKey {
+  equals = 'equals',
+  notEquals = 'notEquals',
+  greaterThan = 'greaterThan',
+  greaterThanOrEqual = 'greaterThanOrEqual',
+  lessThanOrEqual = 'lessThanOrEqual',
+  lessThan = 'lessThan',
+  inArray = 'inArray',
+  notInArray = 'notInArray',
+  contains = 'contains',
+  startsWith = 'startsWith',
+  endsWith = 'endsWith',
+  exists = 'exists',
+  notContains = 'notContains',
+}
