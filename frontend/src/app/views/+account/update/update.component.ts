@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { AccountGQL, UpdateAccountGQL } from '@app/graphql/types';
+import {
+  AccountGQL,
+  DeleteAccountGQL,
+  UpdateAccountGQL,
+} from '@app/graphql/types';
 import { MessageService } from '@app/shared/services/message.service';
 import { Subscription } from 'rxjs';
 
@@ -26,6 +30,7 @@ export class UpdateComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private updateAccountGQL: UpdateAccountGQL,
+    private deleteAccountGQL: DeleteAccountGQL,
     private accountGQL: AccountGQL,
     private messageService: MessageService
   ) {}
@@ -63,6 +68,28 @@ export class UpdateComponent implements OnInit {
             this.loading = false;
             this.messageService.showMessage(
               `Item with id ${this.id} not found`
+            );
+          },
+        })
+    );
+  }
+
+  remove(): void {
+    this.subscriptions.push(
+      this.deleteAccountGQL
+        .mutate({
+          id: this.id,
+        })
+        .subscribe({
+          next: (_) => {
+            this.loading = false;
+            this.messageService.showMessage(`Item with id ${this.id} removed`);
+            this.router.navigate(['']);
+          },
+          error: (_) => {
+            this.loading = false;
+            this.messageService.showMessage(
+              `Error removing item with id ${this.id}`
             );
           },
         })
