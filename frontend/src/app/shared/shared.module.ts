@@ -12,8 +12,23 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatInputModule } from '@angular/material/input';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MenuSidenavComponent } from './components/menu-sidenav/menu-sidenav.component';
+import { MessageService } from './services/message.service';
+
 @NgModule({
-  declarations: [LayoutComponent],
+  declarations: [LayoutComponent, MenuSidenavComponent],
   imports: [
     CommonModule,
     MatGridListModule,
@@ -28,8 +43,25 @@ import { RouterModule } from '@angular/router';
     RouterModule,
     MatToolbarModule,
     MatSidenavModule,
+    MatExpansionModule,
   ],
-  exports: [LayoutComponent],
+  exports: [
+    LayoutComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatProgressBarModule,
+    MatInputModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatSortModule,
+    FlexLayoutModule,
+    MatDialogModule,
+    MatExpansionModule,
+  ],
 })
 export class SharedModule {
   static forRoot() {

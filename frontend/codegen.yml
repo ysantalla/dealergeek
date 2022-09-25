@@ -1,0 +1,15 @@
+overwrite: true
+schema: "http://localhost:3001/core/api/graphql"
+documents: "*/**/*.graphql"
+config:
+  addExplicitOverride: true
+generates:
+  src/app/graphql/types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-resolvers"
+      - "typescript-apollo-angular"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

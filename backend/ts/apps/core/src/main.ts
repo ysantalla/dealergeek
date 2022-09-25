@@ -20,6 +20,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('core/api/rest');
   app.useGlobalFilters(new CatchAllExceptionFilter());
+  app.enableCors();
 
   app.useGlobalPipes(
     new ValidationPipe({ transform: true, forbidUnknownValues: false }),

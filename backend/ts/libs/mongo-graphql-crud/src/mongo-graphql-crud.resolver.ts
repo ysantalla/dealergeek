@@ -1,10 +1,5 @@
-import { ForbiddenError, UserInputError } from 'apollo-server-express';
-import {
-  subject,
-  ForbiddenError as CaslForbiddenError,
-  Ability,
-} from '@casl/ability';
-import { CaslService, ROOT_ABILITY } from '@app/nestjs-casl';
+import { ForbiddenError } from 'apollo-server-express';
+
 import { Inject, Type } from '@nestjs/common';
 import {
   Query,
@@ -26,7 +21,6 @@ import { Paginated } from './get-all-response.dto';
 import { plural } from 'pluralize';
 import {
   getDisabledValue,
-  getSecureValue,
   ResolverCrudOptions,
   DisabledOperationMessage,
 } from './interfaces/crud.options';
@@ -61,8 +55,6 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
   @Resolver({ isAbstract: true })
   class MongoGraphqlCrudResolverHost implements ICrudResolver {
     @Inject(service) readonly crudService: ICrudService;
-    @Inject(options.caslAbility || ROOT_ABILITY)
-    readonly caslService: CaslService;
 
     @Query(() => options.getAll?.output || ClassRefPaginated, {
       name: options.getAll?.name || getAllQueryName,
@@ -76,13 +68,7 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
       @Context() context,
     ) {
       checkDisabled(options.getAll);
-      let ability;
-      const isSecure = getSecureValue(options.getAll);
 
-      if (isSecure) {
-        ability = this.caslService.ability(req?.user);
-        await this.preGetAllAbilityHook(ability, context);
-      }
       const queryParsed = MongoQueryBuilder.build(
         params.filters,
         options.getAll?.relationResolvers || [],
@@ -99,22 +85,12 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
         undefined,
       );
 
-      const items = this.crudService.getAll(
-        params,
-        queryParsed,
-        isSecure ? ability : undefined,
-      );
+      const items = this.crudService.getAll(params, queryParsed);
 
-      const total = this.crudService.count(
-        queryParsedCount,
-        isSecure ? ability : undefined,
-      );
+      const total = this.crudService.count(queryParsedCount);
 
       if (queryParsed.summaryQuery.length > 0) {
-        const summary = this.crudService.summary(
-          queryParsed,
-          isSecure ? ability : undefined,
-        );
+        const summary = this.crudService.summary(queryParsed);
 
         const result: any = await Promise.all([items, total, summary]);
 
@@ -137,12 +113,8 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
       @Context('req') req,
     ) {
       checkDisabled(options.get);
-      let ability;
-      const isSecure = getSecureValue(options.getAll);
-      if (isSecure) {
-        ability = this.caslService.ability(req?.user);
-      }
-      return await this.crudService.get(id, isSecure ? ability : undefined);
+
+      return this.crudService.get(id);
     }
     @Mutation(
       () => options.create?.output || options?.output || ClassRefPartial,
@@ -158,20 +130,7 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
       @Context('req') req,
     ) {
       checkDisabled(options.create);
-      if (getSecureValue(options.create)) {
-        const ability = this.caslService.ability(req?.user);
-        try {
-          CaslForbiddenError.from(ability).throwUnlessCan(
-            'create',
-            subject(classRef.name, dto),
-          );
-        } catch (error) {
-          if (error instanceof CaslForbiddenError) {
-            throw new ForbiddenError(error.message);
-          }
-        }
-      }
-      return await this.crudService.create(dto);
+      return this.crudService.create(dto);
     }
 
     @Mutation(
@@ -189,21 +148,7 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
       @Context('req') req,
     ) {
       checkDisabled(options.update);
-      if (getSecureValue(options.update)) {
-        const itemToUpdate = await this.crudService.get(id);
-        const ability = this.caslService.ability(req?.user);
-        try {
-          CaslForbiddenError.from(ability).throwUnlessCan(
-            'update',
-            subject(classRef.name, itemToUpdate),
-          );
-        } catch (error) {
-          if (error instanceof CaslForbiddenError) {
-            throw new ForbiddenError(error.message);
-          }
-        }
-      }
-      return await this.crudService.update(id, dto);
+      return this.crudService.update(id, dto);
     }
 
     @Mutation(
@@ -220,26 +165,7 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
       @Context('req') req,
     ) {
       checkDisabled(options.delete);
-      if (getSecureValue(options.delete)) {
-        const item = await this.crudService.get(id);
-        const ability = this.caslService.ability(req?.user);
-
-        if (!item) {
-          throw new UserInputError('Item not found');
-        }
-
-        try {
-          CaslForbiddenError.from(ability).throwUnlessCan(
-            'delete',
-            subject(classRef.name, item),
-          );
-        } catch (error) {
-          if (error instanceof CaslForbiddenError) {
-            throw new ForbiddenError(error.message);
-          }
-        }
-      }
-      return await this.crudService.delete(id);
+      return this.crudService.delete(id);
     }
 
     @Mutation(() => options.deleteMany?.output || Number, {
@@ -252,26 +178,7 @@ export function MongoGraphqlCrudResolver<T extends Type<unknown>>(
       @Args('ids', { type: () => [ID] }) ids: string[],
       @Context('req') req,
     ) {
-      checkDisabled(options.delete);
-      if (getSecureValue(options.delete)) {
-        const ability = this.caslService.ability(req?.user);
-
-        try {
-          CaslForbiddenError.from(ability).throwUnlessCan(
-            'deleteMany',
-            subject(classRef.name, ids),
-          );
-        } catch (error) {
-          if (error instanceof CaslForbiddenError) {
-            throw new ForbiddenError(error.message);
-          }
-        }
-      }
-      return await this.crudService.deleteMany(ids);
-    }
-
-    async preGetAllAbilityHook(ability: Ability, context: any): Promise<void> {
-      // @ts-ignore
+      return this.crudService.deleteMany(ids);
     }
   }
 

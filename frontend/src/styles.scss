@@ -1,18 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 @use "@angular/material" as mat;
 
-$my-primary: mat.define-palette(mat.$indigo-palette, 500);
-$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$primary: mat.define-palette(mat.$indigo-palette, 500);
+$accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The "warn" palette is optional and defaults to red if not specified.
-$my-warn: mat.define-palette(mat.$red-palette);
+$warn: mat.define-palette(mat.$red-palette);
 
-$my-theme: mat.define-light-theme(
+$theme: mat.define-light-theme(
   (
     color: (
-      primary: $my-primary,
-      accent: $my-accent,
-      warn: $my-warn,
+      primary: $primary,
+      accent: $accent,
+      warn: $warn,
     ),
   )
 );
@@ -39,4 +39,73 @@ $my-theme: mat.define-light-theme(
     -webkit-transform: scale(1);
     transform: scale(1);
   }
+}
+
+.loading-shade {
+  position: absolute;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  top: 80px;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1024;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Global rules
+.mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+.mat-expansion-panel-header.mat-expanded {
+  height: 48px !important;
+}
+
+.mat-list-item-content {
+  padding-left: 24px !important;
+}
+
+.mat-expansion-panel {
+  border-radius: 0px !important;
+}
+
+.mat-expansion-panel-header.mat-expanded:hover {
+  background-color: #55b8e02c !important;
+}
+
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+  margin-right: 5px !important;
+}
+
+mat-form-field.mat-form-field {
+  font-size: 16px;
+}
+
+.full-width {
+  width: 99%;
+}
+
+.half-width {
+  width: 49%;
+  margin-right: 5px;
+}
+
+.short-width {
+  width: 38%;
+  margin-right: 5px;
+}
+
+.medium-width {
+  width: 60%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.active {
+  border-left: 2px solid #55b8e0;
 }

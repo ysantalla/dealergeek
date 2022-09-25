@@ -14,12 +14,8 @@ export function MongooseGraphqlCrudService<T>(
   class MongooseGraphqlCrudServiceHost implements ICrudService {
     @InjectModel(mongooseClass.name || mongooseClass) model: Model<any> | any;
 
-    async get(id: any, ability?: Ability, lean = true): Promise<any> {
-      if (ability) {
-        return this.model.accessibleBy(ability).findOne({ _id: id }).lean(lean);
-      } else {
-        return this.model.findOne({ _id: id }).lean(lean);
-      }
+    async get(id: any, lean = true): Promise<any> {
+      return this.model.findOne({ _id: id }).lean(lean);
     }
 
     async getOne(query: any): Promise<any> {
@@ -33,14 +29,9 @@ export function MongooseGraphqlCrudService<T>(
     async getAll(
       query: GetAllParams,
       queryParsed: MongoQueryParsed,
-      ability?: Ability,
     ): Promise<any[]> {
       if (queryParsed.executeWithAggregate) {
-        const mongooseQuery = this.model.accessibleBy(ability).getQuery();
         const mongoQuery = this.model.aggregate([
-          {
-            $match: mongooseQuery,
-          },
           ...queryParsed.aggregateQuery,
         ]);
 
@@ -50,9 +41,6 @@ export function MongooseGraphqlCrudService<T>(
           .find(queryParsed.query)
           .skip(query.skip)
           .sort(query.sorts);
-        if (ability) {
-          mongoQuery.accessibleBy(ability);
-        }
         if (query.limit !== -1) {
           mongoQuery.limit(query.limit);
         }
@@ -60,19 +48,10 @@ export function MongooseGraphqlCrudService<T>(
       }
     }
 
-    async count(
-      queryParsed: MongoQueryParsed,
-      ability?: Ability,
-    ): Promise<number> {
+    async count(queryParsed: MongoQueryParsed): Promise<number> {
       if (queryParsed.executeWithAggregate) {
-        const mongooseQuery = this.model.accessibleBy(ability).getQuery();
         const result = await this.model
-          .aggregate([
-            {
-              $match: mongooseQuery,
-            },
-            ...queryParsed.aggregateQuery,
-          ])
+          .aggregate([...queryParsed.aggregateQuery])
           .count('count')
           .exec();
         return result[0]?.count || 0;
@@ -82,30 +61,13 @@ export function MongooseGraphqlCrudService<T>(
             deleted: false,
           });
         }
-
-        if (ability) {
-          return this.model
-            .accessibleBy(ability)
-            .countDocuments(queryParsed.query);
-        } else {
-          return this.model.countDocuments(queryParsed.query);
-        }
+        return this.model.countDocuments(queryParsed.query);
       }
     }
 
-    async summary(
-      queryParsed: MongoQueryParsed,
-      ability?: Ability,
-    ): Promise<any[]> {
-      const mongooseQuery = this.model.accessibleBy(ability).getQuery();
-
+    async summary(queryParsed: MongoQueryParsed): Promise<any[]> {
       const result = await this.model
-        .aggregate([
-          {
-            $match: mongooseQuery,
-          },
-          ...queryParsed.summaryQuery,
-        ])
+        .aggregate([...queryParsed.summaryQuery])
         .exec();
 
       if (result.length > 0) {

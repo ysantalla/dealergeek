@@ -16,6 +16,19 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription[] = [];
 
+  menu: any[] = [
+    {
+      link: '',
+      title: 'Accounts',
+      subMenu: [
+        {
+          link: 'account/upload',
+          title: 'Upload excel',
+        },
+      ],
+    },
+  ];
+
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(

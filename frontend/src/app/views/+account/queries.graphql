@@ -1,0 +1,45 @@
+query Account($id: ID!) {
+  Account(id: $id) {
+    _id
+    account
+    description
+    departament
+    typicalBalance
+    debitOffset
+    creditOffset
+    activeType
+    position
+    sheet
+  }
+}
+
+query Accounts(
+  $skip: Int
+  $limit: Int
+  $sorts: String
+  $filters: Filters
+  $summary: [Summary!]
+) {
+  Accounts(
+    skip: $skip
+    limit: $limit
+    sorts: $sorts
+    filters: $filters
+    summary: $summary
+  ) {
+    total
+    summary
+    items {
+      _id
+      account
+      description
+      departament
+      typicalBalance
+      debitOffset
+      creditOffset
+      activeType
+      position
+      sheet
+    }
+  }
+}

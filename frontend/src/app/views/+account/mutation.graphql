@@ -1,0 +1,21 @@
+mutation updateAccount($id: ID!, $item: AccountUpdateInput!) {
+  updateAccount(id: $id, item: $item) {
+    _id
+    account
+    description
+    departament
+    typicalBalance
+    debitOffset
+    creditOffset
+    activeType
+    position
+    sheet
+  }
+}
+
+mutation deleteAccount($id: ID!) {
+  deleteAccount(id: $id) {
+    _id
+    account
+  }
+}
